@@ -1,37 +1,32 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
-import 'react-native-reanimated';
+import { Slot } from "expo-router";
+import { SafeAreaView, StyleSheet, View, Dimensions } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 
-import { useColorScheme } from '@/hooks/useColorScheme';
-
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
+const { width, height } = Dimensions.get("window");
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-  });
-
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
-
-  if (!loaded) {
-    return null;
-  }
-
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-    </ThemeProvider>
+    <SafeAreaView style={{ flex: 1 }}>
+      <LinearGradient
+        colors={["#0f2027", "#203a43", "#2c5364"]}
+        style={styles.background}
+      >
+        <View style={styles.patternOverlay} />
+        <Slot />
+      </LinearGradient>
+    </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+    width,
+    height,
+  },
+  patternOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    opacity: 0.05,
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
+  },
+});
